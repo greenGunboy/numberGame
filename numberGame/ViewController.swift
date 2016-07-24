@@ -44,6 +44,8 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
     
     var startTime = NSTimeInterval()
     var timer:NSTimer = NSTimer()
+    var timeArray:[Int] = []
+    var resultTimer = 0
     
     var myAudioPlayer : AVAudioPlayer!
     
@@ -58,35 +60,6 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         
     }
     
-    func onClickMyButton(sender: UIButton) {
-        
-        //playingプロパティがtrueであれば音源再生中.
-        if myAudioPlayer.playing == true {
-            
-            //myAudioPlayerを一時停止.
-            myAudioPlayer.pause()
-            sender.setTitle("▶︎", forState: .Normal)
-        } else {
-            
-            //myAudioPlayerの再生.
-            myAudioPlayer.play()
-            sender.setTitle("■", forState: .Normal)
-        }
-    }
-    
-    //音楽再生が成功した時に呼ばれるメソッド.
-    func audioPlayerDidFinishPlaying(player: AVAudioPlayer!, successfully flag: Bool) {
-        print("Music Finish")
-        
-        //再度myButtonを"▶︎"に設定.
-//        myButton.setTitle("▶︎", forState: .Normal)
-    }
-    
-    //デコード中にエラーが起きた時に呼ばれるメソッド.
-    func audioPlayerDecodeErrorDidOccur(player: AVAudioPlayer!, error: NSError!) {
-        print("Error")
-    }
-
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
@@ -222,9 +195,15 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         
     }
     
+    func move() {
+        var targetView: UIViewController = self.storyboard!.instantiateViewControllerWithIdentifier("resultViewController")
+        self.presentViewController(targetView, animated: true, completion: nil)
+    }
+    
     func StartTime() {
         var currentTime = NSDate.timeIntervalSinceReferenceDate()
-        
+        let dateformatter = NSDateFormatter()
+        dateformatter.dateFormat = "mm:ss:SS"
         // 現在の時間を調べるためにスタートします
         var Time: NSTimeInterval = currentTime - startTime
         
@@ -248,10 +227,15 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
         
         // 時間表示用のラベルに〔分〕〔秒〕〔ミリ秒〕を表示
         timeLabel.text = "\(timeMinutes):\(timeSeconds):\(timeFraction)"
+        var min = Int(timeMinutes)
+        var sec = Int(timeSeconds)
+        var fra = Int(timeFraction)
+        var formmat = "\(min)\(sec)\(fra)"
+        resultTimer = formmat
     }
     
     @IBAction func pushOne(sender: UIButton) {
-        
+        print(resultTimer)
         if oneButton.currentTitle == "1" && oneButton.currentTitle!  == "\(collectButton + 1)"{
             oneButton.backgroundColor = UIColor.brownColor()
             collectButton = 1
@@ -336,10 +320,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             oneAnimate.duration = 0.5
             oneAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result: Int = resultTimer as! Int
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             oneButton.backgroundColor = UIColor.redColor()
@@ -435,10 +429,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             twoAnimate.duration = 0.5
             twoAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             twoButton.backgroundColor = UIColor.redColor()
@@ -533,10 +537,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             threeAnimate.duration = 0.5
             threeAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             threeButton.backgroundColor = UIColor.redColor()
@@ -632,10 +646,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             fourAnimate.duration = 0.5
             fourAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             fourButton.backgroundColor = UIColor.redColor()
@@ -731,10 +755,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             fiveAnimate.duration = 0.5
             fiveAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             fiveButton.backgroundColor = UIColor.redColor()
@@ -830,10 +864,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             sixAnimate.duration = 0.5
             sixAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             sixButton.backgroundColor = UIColor.redColor()
@@ -929,10 +973,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             sevenAnimate.duration = 0.5
             sevenAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             sevenButton.backgroundColor = UIColor.redColor()
@@ -1028,10 +1082,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             eightAnimate.duration = 0.5
             eightAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             eightButton.backgroundColor = UIColor.redColor()
@@ -1127,10 +1191,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             nineAnimate.duration = 0.5
             nineAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             nineButton.backgroundColor = UIColor.redColor()
@@ -1225,10 +1299,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             tenAnimate.duration = 0.5
             tenAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             tenButton.backgroundColor = UIColor.redColor()
@@ -1324,10 +1408,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             elevenAnimate.duration = 0.5
             elevenAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             elevenButton.backgroundColor = UIColor.redColor()
@@ -1423,10 +1517,20 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             twelveAnimate.duration = 0.5
             twelveAnimate.animate()
             timer.invalidate()
-            myAudioPlayer.play()
             
-            let alertController = UIAlertController(title: "クリア！", message: "\(timeLabel.text)", preferredStyle: .Alert)
-            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: nil))
+            var result = Int(resultTimer)
+            var ud = NSUserDefaults.standardUserDefaults()
+            
+            if ud.objectForKey("result") != nil{
+                timeArray = ud.objectForKey("result") as! NSArray as! [Int]
+            }
+            timeArray.append(result)
+            ud.setObject(timeArray, forKey: "result")
+            ud.synchronize()
+//            myAudioPlayer.play()
+            
+            let alertController = UIAlertController(title: "クリア！", message: timeLabel.text, preferredStyle: .Alert)
+            alertController.addAction(UIAlertAction(title: "OK", style: .Default, handler: {action in self.move()}))
             presentViewController(alertController, animated: true, completion: nil)
         }else{
             twelve.backgroundColor = UIColor.redColor()
@@ -1434,7 +1538,6 @@ class ViewController: UIViewController, AVAudioPlayerDelegate {
             twelveAnimate.duration = 0.5
             twelveAnimate.animate()
         }
-
     }
     
 }
